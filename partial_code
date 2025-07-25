@@ -69,10 +69,10 @@ for page_num, page in enumerate(pages):
     df = pd.DataFrame(structured_rows, columns=header)
     all_tables.append((page_num + 1, df))
 
-# ✅ Output
+#  Output
 if not all_tables:
-    print("❌ No BoM tables found.")
+    print(" No BoM tables found.")
 else:
     for page, df in all_tables:
-        print(f"\n✅ Organized BoM Table from Page {page}:\n")
+        print(f"\n Organized BoM Table from Page {page}:\n")
         print(tabulate(df, headers="keys", tablefmt="grid", showindex=False))
