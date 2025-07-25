@@ -2,7 +2,7 @@
 import pandas as pd
 from tabulate import tabulate
 
-# 🧮 Manual Table 1
+#  Manual Table 1
 table1_data = {
     "ITEM": [1, 2, 3, 4, 5, 6],
     "PART NUMBER": [
@@ -33,7 +33,7 @@ table1_data = {
 }
 table1_df = pd.DataFrame(table1_data)
 
-# 🧮 Manual Table 2
+# Manual Table 2
 table2_data = {
     "ITEM": [1, 2, 3, 4, 5, 6, 7, 8],
     "PART NUMBER": [
@@ -81,12 +81,12 @@ table2_data = {
 table2_df = pd.DataFrame(table2_data)
 
 # 🧾 Show in console
-print("\n✅ Manual Table 1:\n")
+print("\n Manual Table 1:\n")
 print(tabulate(table1_df, headers="keys", tablefmt="grid", showindex=False))
-print("\n✅ Manual Table 2:\n")
+print("\n Manual Table 2:\n")
 print(tabulate(table2_df, headers="keys", tablefmt="grid", showindex=False))
 
-# 💾 Save both to one Excel sheet with a two-row gap
+#  Save both to one Excel sheet with a two-row gap
 output_file = "Combined_BoM.xlsx"
 with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     workbook  = writer.book
@@ -104,11 +104,11 @@ with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
     for r_idx, row in enumerate([table2_df.columns.tolist()] + table2_df.values.tolist()):
         worksheet.write_row(gap + r_idx, 0, row)
 
-print(f"\n📁 Excel file saved as {output_file}")
+print(f"\n Excel file saved as {output_file}")
 
-# 📥 Download in Colab
+#  Download in Colab
 try:
     from google.colab import files
     files.download(output_file)
 except ImportError:
-    print("\n📎 Not running in Google Colab — please download manually.")
+    print("\n Not running in Google Colab — please download manually.")
