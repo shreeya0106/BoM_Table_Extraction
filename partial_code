@@ -1,0 +1,78 @@
+!pip install pdf2image pytesseract pandas
+!apt-get install poppler-utils tesseract-ocr
+
+from pdf2image import convert_from_path
+from pytesseract import image_to_string
+import pandas as pd
+import re
+from google.colab import files
+from tabulate import tabulate
+
+uploaded = files.upload()
+pdf_path = list(uploaded.keys())[0]
+pages = convert_from_path(pdf_path, dpi=300)
+
+all_tables = []
+
+for page_num, page in enumerate(pages):
+    text = image_to_string(page)
+    lines = text.strip().split('\n')
+
+    start_index = None
+    for i, line in enumerate(lines):
+        if "part" in line.lower() and "description" in line.lower():
+            start_index = i
+            break
+
+    if start_index is None:
+        continue
+
+    print(f"\n📄 Page {page_num+1} — BoM Header Detected:")
+    print(lines[start_index].strip())
+
+    header = ["Part Number", "Part Name", "Description", "Quantity"]
+    data_lines = []
+
+    for line in lines[start_index + 1:]:
+        line = line.strip()
+        if not line or re.fullmatch(r"[l_|\- ]+", line):
+            continue
+        if "U.S. DEPARTMENT" in line or "BOM and BOP" in line:
+            break
+        data_lines.append(line)
+
+    structured_rows = []
+    for line in data_lines:
+        parts = line.replace("|", "").split()
+
+        # Skip noisy short lines
+        if len(parts) < 3:
+            continue
+
+        # Heuristic: last number is quantity
+        quantity = ""
+        for i in range(len(parts)-1, -1, -1):
+            if parts[i].isdigit():
+                quantity = parts[i]
+                qty_index = i
+                break
+        else:
+            qty_index = len(parts)
+            quantity = ""
+
+        part_number = parts[0]
+        part_name = parts[1] if len(parts) > 1 else ""
+        description = " ".join(parts[2:qty_index]) if qty_index > 2 else ""
+
+        structured_rows.append([part_number, part_name, description, quantity])
+
+    df = pd.DataFrame(structured_rows, columns=header)
+    all_tables.append((page_num + 1, df))
+
+# ✅ Output
+if not all_tables:
+    print("❌ No BoM tables found.")
+else:
+    for page, df in all_tables:
+        print(f"\n✅ Organized BoM Table from Page {page}:\n")
+        print(tabulate(df, headers="keys", tablefmt="grid", showindex=False))
