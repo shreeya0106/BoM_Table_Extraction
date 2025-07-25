@@ -1,0 +1,114 @@
+!pip install xlsxwriter
+import pandas as pd
+from tabulate import tabulate
+
+# 🧮 Manual Table 1
+table1_data = {
+    "ITEM": [1, 2, 3, 4, 5, 6],
+    "PART NUMBER": [
+        "RA 01-1",
+        "RA01-2",
+        "RA 01-4",
+        "RA 01-5",
+        "RA 01-3",
+        "ANSI B18.2.3.5M-M10 x 1.5 x 20"
+    ],
+    "DESCRIPTION": [
+        "BASE",
+        "BRACKET",
+        "SPINDLE",
+        "BUSH",
+        "ROLLER",
+        "Hex Bolt"
+    ],
+    "MATERIAL": [
+        "Cast Iron",
+        "Cast Iron",
+        "Alloy Steel",
+        "Bronze, Soft Tin",
+        "Cast Steel",
+        "Steel, Mild"
+    ],
+    "QTY": [1, 2, 1, 2, 1, 4]
+}
+table1_df = pd.DataFrame(table1_data)
+
+# 🧮 Manual Table 2
+table2_data = {
+    "ITEM": [1, 2, 3, 4, 5, 6, 7, 8],
+    "PART NUMBER": [
+        "UCP21-AST",
+        "3GAA103001-BSE",
+        "7493251",
+        "7493250",
+        "91292A241",
+        "7493252",
+        "91292A274",
+        "7493254"
+    ],
+    "DESCRIPTION": [
+        "PILLOW BLOCK BEARING",
+        "ELECTRIC MOTOR 1.5KW",
+        "BASE FRAME",
+        "BEARING MOUNTING PAD",
+        "SOCKET HEAD SCREWS",
+        "MOTOR SHAFT",
+        "SOCKET HEAD SCREWS",
+        "MOTOR MOUNTING PAD"
+    ],
+    "MATERIAL": [
+        "AST - METRIC SERIES",
+        "ABB - M2AA100L 6",
+        "MACHINED",
+        "MACHINED",
+        "MCMASTER-CARR",
+        "HARDENED STEEL MACHINED",
+        "MCMASTER-CARR",
+        "MACHINED"
+    ],
+    "SOURCE": [
+        "PURCHASED",
+        "PURCHASED",
+        "FABRICATED",
+        "FABRICATED",
+        "PURCHASED",
+        "PURCHASED",
+        "PURCHASED",
+        "FABRICATED"
+    ],
+    "QTY": [1, 1, 1, 2, 4, 1, 2, 1]
+}
+table2_df = pd.DataFrame(table2_data)
+
+# 🧾 Show in console
+print("\n✅ Manual Table 1:\n")
+print(tabulate(table1_df, headers="keys", tablefmt="grid", showindex=False))
+print("\n✅ Manual Table 2:\n")
+print(tabulate(table2_df, headers="keys", tablefmt="grid", showindex=False))
+
+# 💾 Save both to one Excel sheet with a two-row gap
+output_file = "Combined_BoM.xlsx"
+with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
+    workbook  = writer.book
+    worksheet = workbook.add_worksheet("BoM_Combined")
+    writer.sheets["BoM_Combined"] = worksheet
+
+    # Write Table 1 starting at A1
+    for r_idx, row in enumerate([table1_df.columns.tolist()] + table1_df.values.tolist()):
+        worksheet.write_row(r_idx, 0, row)
+
+    # Two-row gap
+    gap = len(table1_df) + 2
+
+    # Write Table 2 starting at A{gap + 1}
+    for r_idx, row in enumerate([table2_df.columns.tolist()] + table2_df.values.tolist()):
+        worksheet.write_row(gap + r_idx, 0, row)
+
+print(f"\n📁 Excel file saved as {output_file}")
+
+# 📥 Download in Colab
+try:
+    from google.colab import files
+    files.download(output_file)
+except ImportError:
+    print("\n📎 Not running in Google Colab — please download manually.")
