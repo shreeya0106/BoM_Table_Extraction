@@ -86,6 +86,9 @@ sudo apt-get install poppler-utils tesseract-ocr
 3. The script:
    - Prints both tables using `tabulate`
    - Saves them to `Combined_BoM.xlsx` with a 2-row gap between them
+
+
+
 **PROJECT STRUCTURE**
 ├── bom_ocr_extractor.ipynb        # Extract BoM tables from PDF via OCR
 ├── manual_bom_writer.ipynb        # Define manual tables and export to Excel
@@ -126,11 +129,18 @@ Table 1 → e.g. Cast Iron Base, Bracket, Bush...
 [2 empty rows]
 Table 2 → Purchased parts like Bearings, Motors, Screws...
 
+
+
+
  Project Structure
 ├── bom_ocr_extractor.ipynb        # Extract BoM tables from PDF via OCR
 ├── manual_bom_writer.ipynb        # Define manual tables and export to Excel
 ├── Combined_BoM.xlsx              # Final combined table output (auto-generated)
 └── README.md                      # This file
+
+
+
+
 
 ** Constraints & Design Decisions**
  No use of LLMs (Large Language Models)
@@ -139,12 +149,20 @@ Table 2 → Purchased parts like Bearings, Motors, Screws...
  All logic is explainable and reproducible
  Does not detect visual grid lines (yet)
 
+
+
+
+
 ** Future Improvements**
 OpenCV-based visual table detection using grid lines
  AI/ML model (TableNet or CascadeTabNet) for complex layouts
  Support for multiline cells and wrapped text
  Auto-export to CSV, JSON, or REST API
  Web UI for drag-and-drop PDF uploads
+
+
+
+
 
 **Author**
 Shreeya Santhoshi Srinath
